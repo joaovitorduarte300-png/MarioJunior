@@ -486,18 +486,35 @@
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  async function carregar() {
+  function carregar() {
     document.getElementById('rodape').textContent = '⏳ Carregando dados…';
-    try {
-      const res  = await fetch(SHEETS_URL + '?t=' + Date.now());
-      cadastros  = await res.json();
-      if (!Array.isArray(cadastros)) cadastros = [];
-    } catch (err) {
+
+    const callbackName = 'jsonp_' + Date.now();
+    const script = document.createElement('script');
+
+    const timer = setTimeout(() => {
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      document.getElementById('rodape').textContent = '⚠️ Tempo esgotado ao buscar dados. Verifique a URL do Apps Script.';
+    }, 10000);
+
+    window[callbackName] = function(dados) {
+      clearTimeout(timer);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      cadastros = Array.isArray(dados) ? dados : [];
+      atualizarStats();
+      render();
+    };
+
+    script.src = SHEETS_URL + '?callback=' + callbackName + '&t=' + Date.now();
+    script.onerror = function() {
+      clearTimeout(timer);
+      delete window[callbackName];
       document.getElementById('rodape').textContent = '⚠️ Erro ao buscar dados. Verifique a URL do Apps Script.';
-      return;
-    }
-    atualizarStats();
-    render();
+    };
+
+    document.body.appendChild(script);
   }
 
   function atualizarStats() {
