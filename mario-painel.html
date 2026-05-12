@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Cadastros · Mario Junior</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --laranja:  #F47920;
+      --laranja2: #e86a10;
+      --preto:    #1a1a1a;
+      --preto2:   #111111;
+      --bg:       #f5f5f5;
+      --branco:   #ffffff;
+      --borda:    #e0e0e0;
+      --cinza:    #6b6b6b;
+      --vermelho: #c0392b;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--preto);
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: var(--preto2);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 66px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 3px solid var(--laranja);
+    }
+
+    .header-esq {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-esq img {
+      height: 72px;
+      filter: drop-shadow(0 2px 8px rgba(244,121,32,.4));
+    }
+
+    .header-info { color: var(--branco); }
+
+    .header-info strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .header-info span {
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      letter-spacing: .5px;
+    }
+
+    .header-acoes { display: flex; gap: 10px; align-items: center; }
+
+    .btn {
+      padding: 9px 18px;
+      border-radius: 7px;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .btn-laranja {
+      background: var(--laranja);
+      color: var(--branco);
+    }
+    .btn-laranja:hover { background: var(--laranja2); transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.8);
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.15); }
+
+    .btn-danger {
+      background: rgba(192,57,43,.15);
+      color: #e74c3c;
+      border: 1px solid rgba(192,57,43,.3);
+    }
+    .btn-danger:hover { background: rgba(192,57,43,.3); }
+
+    /* ===== MAIN ===== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 72px;
+    }
+
+    /* ===== STATS ===== */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat {
+      background: var(--branco);
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: var(--laranja);
+      opacity: .7;
+    }
+
+    .stat.verde::after  { background: #27ae60; }
+    .stat.azul::after   { background: #2980b9; }
+    .stat.roxo::after   { background: #8e44ad; }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--cinza);
+      margin-bottom: 8px;
+    }
+
+    .stat-num {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--preto);
+    }
+
+    .stat.verde .stat-num { color: #27ae60; }
+    .stat.azul  .stat-num { color: #2980b9; }
+    .stat.roxo  .stat-num { color: #8e44ad; }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--cinza);
+      margin-top: 4px;
+    }
+
+    /* ===== TOOLBAR ===== */
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .input-busca {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .input-busca span {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      color: var(--cinza);
+      pointer-events: none;
+    }
+
+    .input-busca input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      border: 2px solid var(--borda);
+      border-radius: 8px;
+      font-size: 14px;
+      background: var(--branco);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .input-busca input:focus { border-color: var(--laranja); }
+
+    /* ===== TABELA ===== */
+    .table-card {
+      background: var(--branco);
+      border-radius: 14px;
+      box-shadow: 0 2px 14px rgba(0,0,0,.07);
+      overflow: hidden;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead {
+      background: var(--preto);
+    }
+
+    thead th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.65);
+    }
+
+    thead th:first-child { color: var(--laranja); }
+
+    tbody tr {
+      border-bottom: 1px solid var(--borda);
+      transition: background .1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fdf5ee; }
+
+    tbody td {
+      padding: 14px 20px;
+      font-size: 14px;
+    }
+
+    .td-seq {
+      color: var(--cinza);
+      font-size: 12px;
+      font-weight: 700;
+      width: 40px;
+    }
+
+    .td-nome { font-weight: 700; color: var(--preto); }
+
+    .td-telefone a {
+      color: #27ae60;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .td-telefone a:hover { text-decoration: underline; }
+
+    .td-email { color: var(--cinza); font-size: 13px; }
+
+    .td-data { color: #aaa; font-size: 12px; white-space: nowrap; }
+
+    .btn-del {
+      background: none;
+      border: none;
+      color: #ddd;
+      cursor: pointer;
+      font-size: 15px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      transition: all .15s;
+    }
+    .btn-del:hover { background: #fee; color: var(--vermelho); }
+
+    /* ===== VAZIO ===== */
+    #vazio {
+      display: none;
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--cinza);
+    }
+
+    #vazio .vazio-icon { font-size: 52px; margin-bottom: 16px; }
+
+    #vazio h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--preto);
+      margin-bottom: 8px;
+    }
+
+    /* ===== RODAPÉ TABELA ===== */
+    .table-rodape {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      border-top: 1px solid var(--borda);
+      background: #fafafa;
+      font-size: 12px;
+      color: var(--cinza);
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #27ae60;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .3; }
+    }
+
+    /* ===== MODAL ===== */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay.ativo { display: flex; }
+
+    .modal {
+      background: var(--branco);
+      border-radius: 14px;
+      padding: 36px;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+
+    .modal-icon { font-size: 44px; margin-bottom: 16px; }
+    .modal h3 { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+    .modal p { font-size: 14px; color: var(--cinza); margin-bottom: 24px; line-height: 1.6; }
+
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+
+    .btn-cancel {
+      background: #f0f0f0;
+      color: var(--preto);
+      border: none;
+    }
+
+    .btn-cancel:hover { background: #e0e0e0; }
+
+    .btn-confirm-del {
+      background: var(--vermelho);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-confirm-del:hover { background: #e74c3c; }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 800px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .td-data { display: none; }
+      header { padding: 0 16px; }
+      .btn-ghost { display: none; }
+    }
+
+    @media (max-width: 500px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .td-email { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="header-esq">
+    <img src="mario/logo-banner.png" alt="Mario Junior">
+    <div class="header-info">
+      <strong>Painel de Cadastros</strong>
+      <span>Lançamento Pré-Campanha · 22 de Maio · CDL Uberlândia</span>
+    </div>
+  </div>
+  <div class="header-acoes">
+    <button class="btn btn-ghost" onclick="window.open('mario-cadastro.html','_blank')">🔗 Ver Formulário</button>
+    <button class="btn btn-laranja" onclick="exportarCSV()">⬇️ Exportar CSV</button>
+    <button class="btn btn-danger" onclick="abrirModal()">🗑️ Limpar</button>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- Cards de stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Total Confirmados</div>
+      <div class="stat-num" id="s-total">0</div>
+      <div class="stat-sub">inscrições recebidas</div>
+    </div>
+    <div class="stat verde">
+      <div class="stat-label">Cadastros Hoje</div>
+      <div class="stat-num" id="s-hoje">0</div>
+      <div class="stat-sub">novos hoje</div>
+    </div>
+    <div class="stat azul">
+      <div class="stat-label">Com Telefone</div>
+      <div class="stat-num" id="s-tel">0</div>
+      <div class="stat-sub">para contato</div>
+    </div>
+    <div class="stat roxo">
+      <div class="stat-label">Com E-mail</div>
+      <div class="stat-num" id="s-email">0</div>
+      <div class="stat-sub">para envio</div>
+    </div>
+  </div>
+
+  <!-- Busca -->
+  <div class="toolbar">
+    <div class="input-busca">
+      <span>🔍</span>
+      <input type="text" id="busca" placeholder="Buscar por nome, e-mail ou telefone…" oninput="render()">
+    </div>
+  </div>
+
+  <!-- Tabela -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome Completo</th>
+          <th>Telefone / WhatsApp</th>
+          <th>E-mail</th>
+          <th>Cadastro em</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <div id="vazio">
+      <div class="vazio-icon">📋</div>
+      <h3>Nenhum cadastro ainda</h3>
+      <p>Compartilhe o formulário para começar a receber confirmações.</p>
+    </div>
+
+    <div class="table-rodape">
+      <span id="rodape">–</span>
+      <span><span class="live-dot"></span>Atualiza automaticamente</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- ===== MODAL CONFIRMAR LIMPEZA ===== -->
+<div class="overlay" id="modal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h3>Limpar todos os cadastros?</h3>
+    <p>Esta ação é permanente e não pode ser desfeita. Todos os dados serão apagados.</p>
+    <div class="modal-btns">
+      <button class="btn btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-confirm-del" onclick="limparTudo()">Sim, limpar tudo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ⚠️ Cole aqui a mesma URL do Google Apps Script
+  const SHEETS_URL = 'SUA_URL_AQUI';
+
+  let cadastros = [];
+
+  function waLink(tel) {
+    return 'https://wa.me/55' + tel.replace(/\D/g, '');
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  async function carregar() {
+    document.getElementById('rodape').textContent = '⏳ Carregando dados…';
+    try {
+      const res  = await fetch(SHEETS_URL + '?t=' + Date.now());
+      cadastros  = await res.json();
+      if (!Array.isArray(cadastros)) cadastros = [];
+    } catch (err) {
+      document.getElementById('rodape').textContent = '⚠️ Erro ao buscar dados. Verifique a URL do Apps Script.';
+      return;
+    }
+    atualizarStats();
+    render();
+  }
+
+  function atualizarStats() {
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    document.getElementById('s-total').textContent = cadastros.length;
+    document.getElementById('s-hoje').textContent  = cadastros.filter(r => r.data && r.data.startsWith(hoje)).length;
+    document.getElementById('s-tel').textContent   = cadastros.filter(r => r.telefone).length;
+    document.getElementById('s-email').textContent = cadastros.filter(r => r.email).length;
+  }
+
+  function render() {
+    const busca    = document.getElementById('busca').value.toLowerCase();
+    const filtrado = [...cadastros]
+      .filter(r => !busca || [r.nome, r.email, r.telefone].some(v => v && v.toLowerCase().includes(busca)))
+      .reverse();
+
+    const tbody = document.getElementById('tbody');
+    const vazio = document.getElementById('vazio');
+
+    if (filtrado.length === 0) {
+      tbody.innerHTML = '';
+      vazio.style.display = 'block';
+      document.getElementById('rodape').textContent = busca ? 'Nenhum resultado para a busca.' : 'Aguardando inscrições…';
+      return;
+    }
+
+    vazio.style.display = 'none';
+    tbody.innerHTML = filtrado.map((r, i) => `
+      <tr>
+        <td class="td-seq">${filtrado.length - i}</td>
+        <td class="td-nome">${escHtml(r.nome || '–')}</td>
+        <td class="td-telefone">
+          ${r.telefone
+            ? `<a href="${waLink(r.telefone)}" target="_blank">📱 ${escHtml(r.telefone)}</a>`
+            : '<span style="color:#bbb">–</span>'}
+        </td>
+        <td class="td-email">${escHtml(r.email || '–')}</td>
+        <td class="td-data">${escHtml(r.data || '–')}</td>
+        <td></td>
+      </tr>
+    `).join('');
+
+    document.getElementById('rodape').textContent =
+      `${filtrado.length} de ${cadastros.length} cadastro${cadastros.length !== 1 ? 's' : ''}`;
+  }
+
+  function abrirModal()  { document.getElementById('modal').classList.add('ativo'); }
+  function fecharModal() { document.getElementById('modal').classList.remove('ativo'); }
+
+  function limparTudo() {
+    alert('Para apagar registros, acesse diretamente a planilha no Google Sheets.');
+    fecharModal();
+  }
+
+  function exportarCSV() {
+    if (!cadastros.length) { alert('Nenhum cadastro para exportar.'); return; }
+
+    const linhas = [
+      ['#','Nome Completo','Telefone','E-mail','Data de Cadastro'],
+      ...cadastros.map((r, i) => [
+        i + 1,
+        `"${(r.nome     || '').replace(/"/g,'""')}"`,
+        `"${(r.telefone || '').replace(/"/g,'""')}"`,
+        `"${(r.email    || '').replace(/"/g,'""')}"`,
+        `"${(r.data     || '').replace(/"/g,'""')}"`
+      ])
+    ].map(l => l.join(',')).join('\n');
+
+    const blob = new Blob(['﻿' + linhas], { type: 'text/csv;charset=utf-8;' });
+    const a = Object.assign(document.createElement('a'), {
+      href:     URL.createObjectURL(blob),
+      download: `cadastros-mario-junior-${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // Init + auto-refresh a cada 30s
+  carregar();
+  setInterval(carregar, 30000);
+</script>
+</body>
+</html>

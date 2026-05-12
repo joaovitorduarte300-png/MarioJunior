@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mario Junior – Lançamento Pré-Campanha</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --laranja:  #F47920;
+      --laranja2: #e86a10;
+      --laranja3: #fff3e8;
+      --preto:    #1a1a1a;
+      --preto2:   #2d2d2d;
+      --cinza:    #f5f5f5;
+      --cinza2:   #6b6b6b;
+      --borda:    #e0e0e0;
+      --branco:   #ffffff;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--preto);
+      color: var(--preto);
+      min-height: 100vh;
+    }
+
+    /* ===== TOPO PARTIDO ===== */
+    .faixa-partido {
+      background: var(--laranja);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .partido-tag {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--branco);
+    }
+
+    .partido-sep {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.6);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: var(--preto);
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 64px;
+    }
+
+    /* padrão de fundo sutil */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(244,121,32,.04) 40px,
+        rgba(244,121,32,.04) 80px
+      );
+      pointer-events: none;
+    }
+
+    /* mancha laranja no canto */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -80px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(244,121,32,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 52px 32px 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: end;
+    }
+
+    /* Conteúdo esquerdo */
+    .hero-conteudo { padding-bottom: 64px; }
+
+    .logo-hero {
+      height: 220px;
+      margin-bottom: 32px;
+      filter: drop-shadow(0 4px 20px rgba(244,121,32,.4));
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(244,121,32,.15);
+      border: 1px solid rgba(244,121,32,.3);
+      border-radius: 4px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 22px;
+    }
+
+    .hero-titulo {
+      font-size: clamp(30px, 4vw, 52px);
+      font-weight: 900;
+      color: var(--branco);
+      line-height: 1.08;
+      margin-bottom: 20px;
+    }
+
+    .hero-titulo .dest { color: var(--laranja); }
+
+    .hero-desc {
+      font-size: 16px;
+      color: rgba(255,255,255,.65);
+      line-height: 1.75;
+      max-width: 500px;
+      margin-bottom: 40px;
+    }
+
+    /* Cards de info */
+    .evento-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 480px;
+    }
+
+    .ev-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ev-card.full { grid-column: span 2; }
+
+    .ev-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .ev-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--laranja);
+      margin-bottom: 2px;
+    }
+
+    .ev-valor {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--branco);
+    }
+
+    /* Foto candidato */
+    .hero-foto {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+    }
+
+    .foto-wrap {
+      position: relative;
+      width: 300px;
+    }
+
+    .foto-wrap::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(ellipse, rgba(244,121,32,.3) 0%, transparent 70%);
+    }
+
+    /* linha laranja lateral */
+    .foto-wrap::after {
+      content: '';
+      position: absolute;
+      top: 10%;
+      left: -16px;
+      width: 4px;
+      height: 70%;
+      background: linear-gradient(180deg, var(--laranja) 0%, transparent 100%);
+      border-radius: 2px;
+    }
+
+    .foto-wrap img {
+      width: 100%;
+      display: block;
+      position: relative;
+    }
+
+    .nome-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+
+    .nome-badge span {
+      background: var(--laranja);
+      color: var(--branco);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      padding: 6px 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 20px rgba(244,121,32,.5);
+    }
+
+    /* ===== FORMULÁRIO ===== */
+    .form-section {
+      background: var(--cinza);
+      padding: 72px 24px 80px;
+    }
+
+    .form-wrapper { max-width: 520px; margin: 0 auto; }
+
+    .form-label-section {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .form-label-section h2 {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--preto);
+      margin-bottom: 8px;
+    }
+
+    .form-label-section p {
+      font-size: 14px;
+      color: var(--cinza2);
+    }
+
+    .form-card {
+      background: var(--branco);
+      border-radius: 16px;
+      padding: 40px 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.1);
+      border-top: 4px solid var(--laranja);
+    }
+
+    .form-group { margin-bottom: 22px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--preto);
+      margin-bottom: 8px;
+      letter-spacing: .2px;
+    }
+
+    label .req { color: var(--laranja); margin-left: 2px; }
+
+    input[type=text], input[type=email], input[type=tel] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--borda);
+      border-radius: 9px;
+      font-size: 15px;
+      color: var(--preto);
+      background: #fafafa;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    input:focus {
+      border-color: var(--laranja);
+      box-shadow: 0 0 0 3px rgba(244,121,32,.12);
+      background: var(--branco);
+    }
+
+    input::placeholder { color: #bbb; }
+
+    .btn-confirmar {
+      width: 100%;
+      margin-top: 8px;
+      padding: 17px;
+      background: var(--laranja);
+      color: var(--branco);
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .15s, transform .15s, box-shadow .15s;
+      box-shadow: 0 6px 24px rgba(244,121,32,.4);
+    }
+
+    .btn-confirmar:hover {
+      background: var(--laranja2);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(244,121,32,.45);
+    }
+
+    .btn-confirmar:active { transform: translateY(0); }
+
+    .btn-confirmar:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .form-nota {
+      text-align: center;
+      font-size: 12px;
+      color: var(--cinza2);
+      margin-top: 14px;
+    }
+
+    /* ===== SUCESSO ===== */
+    #sucesso { display: none; text-align: center; padding: 8px 0; }
+
+    .sucesso-circulo {
+      width: 80px;
+      height: 80px;
+      background: var(--laranja);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 28px rgba(244,121,32,.4);
+      animation: pop .4s cubic-bezier(.36,.07,.19,.97);
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(.5); opacity: 0; }
+      80%  { transform: scale(1.1); }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+
+    .sucesso-titulo {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--preto);
+      margin-bottom: 16px;
+    }
+
+    .sucesso-msg {
+      background: var(--laranja3);
+      border-left: 4px solid var(--laranja);
+      border-radius: 8px;
+      padding: 18px 20px;
+      text-align: left;
+      font-size: 15px;
+      color: var(--preto2);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .sucesso-msg strong { color: var(--laranja2); }
+
+    .btn-novo {
+      background: none;
+      border: 2px solid var(--laranja);
+      color: var(--laranja);
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .2s;
+    }
+
+    .btn-novo:hover { background: var(--laranja); color: #fff; }
+
+    /* ===== RODAPÉ ===== */
+    footer {
+      background: var(--preto2);
+      color: rgba(255,255,255,.4);
+      text-align: center;
+      font-size: 12px;
+      padding: 22px;
+      line-height: 1.8;
+    }
+
+    footer strong { color: var(--laranja); }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; padding: 36px 20px 0; }
+      .hero-foto { display: none; }
+      .hero-conteudo { padding-bottom: 0; }
+      .evento-grid { grid-template-columns: 1fr; }
+      .ev-card.full { grid-column: span 1; }
+      .form-card { padding: 28px 20px; }
+      .logo-hero { display: block; margin-left: auto; margin-right: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Faixa Partido Novo -->
+<div class="faixa-partido">
+  <span class="partido-tag">Partido Novo</span>
+  <span class="partido-sep"></span>
+  <span class="partido-tag">Pré-Candidato a Deputado Federal</span>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-inner">
+
+    <div class="hero-conteudo">
+      <img src="mario/logo-banner.png" alt="Mario Junior" class="logo-hero">
+
+      <div class="hero-eyebrow">🇧🇷 Lançamento Oficial · Pré-Campanha 2026</div>
+
+      <h1 class="hero-titulo">
+        Uberlândia tem voz.<br>
+        <span class="dest">E essa voz<br>começa agora.</span>
+      </h1>
+
+      <p class="hero-desc">
+        O Brasil precisa voltar a ouvir quem trabalha, empreende, produz e sustenta este país.
+        Um encontro para reunir pessoas que acreditam na liberdade econômica, na boa gestão
+        pública e no respeito ao cidadão que move essa cidade todos os dias.
+      </p>
+
+      <div class="evento-grid">
+        <div class="ev-card">
+          <div class="ev-icon">📍</div>
+          <div>
+            <div class="ev-label">Local</div>
+            <div class="ev-valor">CDL Uberlândia – MG</div>
+          </div>
+        </div>
+        <div class="ev-card">
+          <div class="ev-icon">🕖</div>
+          <div>
+            <div class="ev-label">Horário</div>
+            <div class="ev-valor">A partir das 19h</div>
+          </div>
+        </div>
+        <div class="ev-card full">
+          <div class="ev-icon">📅</div>
+          <div>
+            <div class="ev-label">Data</div>
+            <div class="ev-valor">Sexta-feira, 22 de Maio de 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-foto">
+      <div class="foto-wrap">
+        <img src="mario/foto-mario.jpeg" alt="Mario Junior – Pré-candidato a Deputado Federal">
+        <div class="nome-badge"><span>Mario Junior · Deputado Federal</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== FORMULÁRIO ===== -->
+<section class="form-section">
+  <div class="form-wrapper">
+
+    <div class="form-label-section">
+      <h2>Confirme sua presença</h2>
+      <p>Sua presença é muito importante nesse movimento por uma Uberlândia mais forte e moderna.</p>
+    </div>
+
+    <div class="form-card">
+
+      <form id="form-cadastro">
+
+        <div class="form-group">
+          <label>Nome completo <span class="req">*</span></label>
+          <input type="text" id="nome" placeholder="Digite seu nome completo" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="seu@email.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label>Telefone / WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="telefone" placeholder="(34) 9 0000-0000" required autocomplete="tel">
+        </div>
+
+        <button type="submit" class="btn-confirmar">✅ Confirmar minha presença</button>
+        <p class="form-nota">🔒 Seus dados são usados apenas para confirmação do evento.</p>
+
+      </form>
+
+      <!-- Sucesso -->
+      <div id="sucesso">
+        <div class="sucesso-circulo">✅</div>
+        <div class="sucesso-titulo">Presença confirmada!</div>
+        <div class="sucesso-msg">
+          Obrigado! Aguardamos você na<br>
+          <strong>CDL Uberlândia – MG</strong><br>
+          📅 Sexta-feira, 22 de maio<br>
+          🕖 A partir das 19h
+        </div>
+        <button class="btn-novo" onclick="novoRegistro()">Indicar um amigo</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>Mario Junior</strong> · Pré-candidato a Deputado Federal · Uberlândia – MG<br>
+  Partido Novo
+</footer>
+
+<script>
+  // ⚠️ Cole aqui a URL do seu Google Apps Script após implantar
+  const SHEETS_URL = 'SUA_URL_AQUI';
+
+  // Máscara de telefone
+  document.getElementById('telefone').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+    if      (v.length <= 2)  v = v.replace(/^(\d{0,2})/, '($1');
+    else if (v.length <= 7)  v = v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+    else                     v = v.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+    e.target.value = v;
+  });
+
+  document.getElementById('form-cadastro').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.querySelector('.btn-confirmar');
+    btn.disabled = true;
+    btn.textContent = '⏳ Enviando…';
+
+    const dados = {
+      nome:     document.getElementById('nome').value.trim(),
+      email:    document.getElementById('email').value.trim(),
+      telefone: document.getElementById('telefone').value.trim()
+    };
+
+    try {
+      await fetch(SHEETS_URL, {
+        method:  'POST',
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(dados)
+      });
+    } catch (err) {
+      // no-cors não permite ler a resposta, mas o dado foi enviado
+    }
+
+    btn.disabled = false;
+    btn.textContent = '✅ Confirmar minha presença';
+
+    document.getElementById('form-cadastro').style.display = 'none';
+    document.getElementById('sucesso').style.display = 'block';
+  });
+
+  function novoRegistro() {
+    document.getElementById('form-cadastro').reset();
+    document.getElementById('form-cadastro').style.display = 'block';
+    document.getElementById('sucesso').style.display = 'none';
+  }
+</script>
+</body>
+</html>
